@@ -20,10 +20,6 @@ func Format(article parse.Article) (string, map[string][]byte) {
 	var result string
 	var titleMdStr string = formatTitle(article.Title)
 	result += titleMdStr
-	var metaMdStr string = formatMeta(article.Meta)
-	result += metaMdStr
-	var tagsMdStr string = formatTags(article.Tags)
-	result += tagsMdStr
 	var saveImageBytes map[string][]byte
 	content, saveImageBytes := formatContent(article.Content, 0)
 	result += content
@@ -108,7 +104,7 @@ func FormatAndSave(article parse.Article, filePath string) error {
 
 	// make basePath dir if not exists
 	if _, err := os.Stat(basePath); err != nil {
-		if err := os.MkdirAll(basePath, 0755); err != nil {
+		if err := os.MkdirAll(basePath, 0o755); err != nil {
 			panic(err)
 		}
 	}
@@ -131,11 +127,19 @@ func FormatAndSave(article parse.Article, filePath string) error {
 			}
 			defer f.Close()
 			buf := new(bytes.Buffer)
-			binary.Write(buf, binary.LittleEndian, saveImageBytes[imgTitle])
-			f.Write(buf.Bytes())
+			err = binary.Write(buf, binary.LittleEndian, saveImageBytes[imgTitle])
+			if err != nil {
+				log.Fatalf("can not save image file: %s\n err: %v", imgfileName, err)
+				continue
+			}
+			_, err = f.Write(buf.Bytes())
+			if err != nil {
+				log.Fatalf("can not save image file: %s\n err: %v", imgfileName, err)
+				continue
+			}
 		}
 	}
-	return os.WriteFile(fileName, []byte(result), 0644)
+	return os.WriteFile(fileName, []byte(result), 0o644)
 }
 
 func formatTitle(piece parse.Piece) string {

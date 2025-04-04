@@ -221,14 +221,13 @@ func ParseFromHTMLFile(filepath string, imagePolicy ImagePolicy) Article {
 	defer file.Close()
 	content, err2 := io.ReadAll(file)
 	if err2 != nil {
-		panic(err)
+		panic(err2)
 	}
 	return ParseFromReader(bytes.NewReader(content), imagePolicy)
 }
 
 func ParseFromURL(url string, imagePolicy ImagePolicy) Article {
 	req, err := http.NewRequest("GET", url, nil)
-
 	if err != nil {
 		log.Fatalf("new request %s error: %s", url, err.Error())
 	}
@@ -250,10 +249,10 @@ func removeBrAndBlank(s string) string {
 	reg, _ := regexp.Compile(regstr)
 	sb := make([]byte, len(s))
 	copy(sb, s)
-	spc_index := reg.FindStringIndex(string(sb)) //在字符串中搜索
-	for len(spc_index) > 0 {                     //找到适配项
-		sb = append(sb[:spc_index[0]+1], sb[spc_index[1]:]...) //删除多余空格
-		spc_index = reg.FindStringIndex(string(sb))            //继续在字符串中搜索
+	spc_index := reg.FindStringIndex(string(sb)) // 在字符串中搜索
+	for len(spc_index) > 0 {                     // 找到适配项
+		sb = append(sb[:spc_index[0]+1], sb[spc_index[1]:]...) // 删除多余空格
+		spc_index = reg.FindStringIndex(string(sb))            // 继续在字符串中搜索
 	}
 	return strings.Replace(string(sb), "\n", " ", -1)
 }

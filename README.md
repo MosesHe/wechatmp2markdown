@@ -1,10 +1,17 @@
 # wechatmp2markdown 微信公众号文章转Markdown
 
 ```
-注意：本项目源代码目前只托管在 Github 平台，该平台的logo是一只“直立着、有一只触手的章鱼猫”，若您在其他地方看到本项目，请勿相信。
+注意：本项目源代码目前只托管在 Github 平台，该平台的logo是一只"直立着、有一只触手的章鱼猫"，若您在其他地方看到本项目，请勿相信。
 gggggggggggggggggggggggggggggggggggggggggggggggpppbbbbbbbbbbbbbbbpppggggggggggggggggggggggggggggggggggggggggggggggg
 ggggggggggggggggggggggggggggggggggggggpbmhb7                          77hhbbpgggggggggggggggggggggggggggggggggggggg
 ggggggggggggggggggggggggggggggggpbh7                                          77hbpgggggggggggggggggggggggggggggggg
+gggggggggggggggggggggggggggpph7                                                     7hpggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+gggggggggggggggggggggggpph                                                              7hpggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+ggggggggggggggggggggpmb                                                                     hbggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+gggggggggggggggggppb                                                                           hpggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+gggggggggggggggpb                                                                                 hggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+gggggggggggggpb                                                                                     hpggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+gggggggggggpm                                                                                         7pggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
 gggggggggggggggggggggggggggpph7                                                     7hpgggggggggggggggggggggggggggg
 gggggggggggggggggggggggpph                                                              7hpgggggggggggggggggggggggg
 ggggggggggggggggggggpmb                                                                     hbggggggggggggggggggggg
@@ -53,6 +60,8 @@ gggggggggggggggggggggggggggggggggggg      gggggggggggggggggggggggggggggg      gg
 ## 使用
 ### CLI 模式
 通过命令行使用
+
+#### 1. 从URL转换
 执行命令：`本程序可执行文件 [url] [filepath] [--image]`
 - `url`      微信公众号文章网页的url
 - `filepath` makedown文件的保存位置，若该值为目录，则以文章标题作为文件名保存在该目录下；若以`.md`结尾，则以输入的文件名作为文件名保存；`./`为保存到当前目录
@@ -70,12 +79,80 @@ wechatmp2makrdown_win64.exe https://mp.weixin.qq.com/s/a=1&b=2 D:\wechatmp_bak -
 
 markdown和图片文件将保存在 `D:\wechatmp_bak\gitcode操你妈\` 下
 
-> 在Windows环境下，文件或路径名不能包含以下任何字符：“（双引号）、*（星号）、<（小于）、>（大于）、？（问号）、\（反斜杠）、/（正斜杠）、|（竖线）、：（冒号）。当标题包含以上字符时，本程序将用相似的Unicode字符进行替换，具体替换规则为：  
+#### 2. 从本地HTML文件转换
+执行命令：`本程序可执行文件 file [html文件路径] [保存路径] [--image]`
+- `html文件路径` 本地已保存的微信公众号文章HTML文件的路径
+- `保存路径` makedown文件的保存位置，若该值为目录，则以文章标题作为文件名保存在该目录下；若以`.md`结尾，则以输入的文件名作为文件名保存；`./`为保存到当前目录
+- `--image` 可选参数，与URL转换模式相同
+
+例如：windows环境，想把本地HTML文件`D:\html\article.html`转成markdown存到 `D:\markdown_output`下，文章内的**图片**保存到**本地**
+
+则cmd执行： 
+```
+wechatmp2makrdown_win64.exe file D:\html\article.html D:\markdown_output --image=save
+```
+
+#### 3. 批量重命名目录
+执行命令：`本程序可执行文件 rename [公众号目录路径]`
+
+该功能用于批量处理本地保存的微信公众号文章目录，将形如 `2024-10-07 带娃出行何来"原罪"` 的目录名规范化为 `2024-10-07带娃出行何来原罪`（去除空格、引号，只保留日期和汉字）。
+
+例如：windows环境，想规范化 `D:\WechatDownload\浙江宣传\` 目录下所有子目录的名称
+
+则cmd执行： 
+```
+wechatmp2makrdown_win64.exe rename "D:\WechatDownload\浙江宣传"
+```
+
+> 注意：该功能只处理公众号目录的直接子目录，不会递归处理子目录中的目录。目录名必须以日期（YYYY-MM-DD格式）开头。
+
+#### 4. 批量转换HTML文件
+执行命令：`本程序可执行文件 batch [公众号目录路径] [--image]`
+
+该功能用于批量将公众号目录下所有子目录中的HTML文件转换为Markdown。它会自动寻找每个子目录中的HTML文件（优先使用index.html），转换后的Markdown文件将保存在HTML文件同级目录下，使用文章标题作为文件名。
+
+例如：windows环境，想将 `D:\WechatDownload\浙江宣传\` 目录下所有子目录中的HTML文件批量转换为Markdown，并将图片保存到本地
+
+则cmd执行： 
+```
+wechatmp2makrdown_win64.exe batch "D:\WechatDownload\浙江宣传" --image=save
+```
+
+> 注意：该功能会自动处理子目录中的文件，但不会递归处理子目录中的子目录。
+
+#### 5. 批量转换HTML文件为TXT
+执行命令：`本程序可执行文件 batchTxt [公众号目录路径]`
+
+该功能用于批量将公众号目录下所有子目录中的HTML文件转换为纯文本TXT文件。与Markdown转换不同，TXT文件只包含文章的正文部分，不包含meta信息、tag和图片等内容。转换后的TXT文件将保存在HTML文件同级目录下，使用文章标题作为文件名。
+
+例如：windows环境，想将 `D:\WechatDownload\浙江宣传\` 目录下所有子目录中的HTML文件批量转换为TXT
+
+则cmd执行： 
+```
+wechatmp2makrdown_win64.exe batchTxt "D:\WechatDownload\浙江宣传"
+```
+
+#### 6. 从本地HTML文件转换为TXT
+执行命令：`本程序可执行文件 fileTxt [HTML文件路径] [保存路径]`
+
+该功能用于将单个HTML文件转换为纯文本TXT文件。TXT文件只包含文章的正文部分，不包含meta信息、tag和图片等内容。
+
+- `HTML文件路径` 本地已保存的微信公众号文章HTML文件的路径
+- `保存路径` TXT文件的保存位置，若该值为目录，则以文章标题作为文件名保存在该目录下；若以`.txt`结尾，则以输入的文件名作为文件名保存；`./`为保存到当前目录
+
+例如：windows环境，想把本地HTML文件`D:\html\article.html`转成TXT存到 `D:\txt_output`下
+
+则cmd执行： 
+```
+wechatmp2makrdown_win64.exe fileTxt D:\html\article.html D:\txt_output
+```
+
+> 在Windows环境下，文件或路径名不能包含以下任何字符："（双引号）、*（星号）、<（小于）、>（大于）、？（问号）、\（反斜杠）、/（正斜杠）、|（竖线）、：（冒号）。当标题包含以上字符时，本程序将用相似的Unicode字符进行替换，具体替换规则为：  
 > ```
 > "<" -> "≺"
 > ">" -> "≻"
 > ":" -> "∶"
-> """ -> "“"
+> """ -> """
 > "/" -> "∕"
 > "\" -> "∖"
 > "|" -> "∣"
